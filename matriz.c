@@ -11,20 +11,22 @@ int rand(void);
 float aleatorio(void);
 int poblar(int *red, float p, int dim);
 int imprimir(int *red, int dim);
-/*int clasificar(int *red,int dim);
-int etiqueta_falsa(int *red, int *historial, int s1 int s2, int i);
+int clasificar(int *red,int dim); /*
+int caso2(int *red,int dim,int frag, int i);
+int caso3(int *red,int dim, int *historial, int s1, int s2, int i);
+int etiqueta_falsa(int *red, int dim, int *historial, int s1 int s2, int i);
 */
 
 
 int main(int argc,char *argv[]){
-	int dim=20;
-	int red[dim*dim];
-	float p=0.5;
-/*	sscanf(argv[1], "%d", & dim);
+	int dim, *red;
+	float p;
+	sscanf(argv[1], "%d", & dim);
 	sscanf(argv[2], "%f", & p); 
-	red=(int*)malloc(dim*dim*sizeof(int)); */
+	red=(int*)malloc(dim*dim*sizeof(int));
 	srand(time(NULL));
 	poblar(red , p , dim);
+	clasificar(red, dim);
 	imprimir(red, dim);
 	free(red);	
 	return 0;
@@ -53,22 +55,96 @@ return 0;
 }
 
 
-/*
+
+/* 
+
+int caso2(int *red,int dim,int frag, int i){
+
+
+
+return 0;
+}
+*/
+
+
+
+/* 
+
+int caso3(int *red,int dim, int *historial, int s1, int s2, int i){
+
+
+
+return 0;
+}
+*/
+
+
+/* 
+
+int caso4(int *red,int dim, int *historial, int s1, int s2, int i){
+
+
+
+return 0;
+}
+*/
+
+
+
 int clasificar(int *red,int dim){
-	int i, s1, s2, *hitorial,frag;
-	frag=1;
-
-	for(i=0;i<dim*dim/2;i++){
+	int i, s1, *historial,frag;
+	frag=2;
+	historial=(int*)malloc(dim*dim*sizeof(int));
+	for(i=0;i<dim*dim;i++){
 		*(historial+i)=i;
-	}
-
-	for(i=0;i<dim;i++){
-		if(*(red+i)==1 && *(red+i+dim)==0 && *(red+i+1)==0){
-			*(ref+1)=*(historial+frag);
-			frag++;
+	}	
+	
+	s1=(*red);
+	
+	if(s1){
+		*red=frag;
+		frag++;
 		}
-		if(*(red+i)==1 &&)		
+	
+	
+	for(i=1;i<dim;i++){                                //Caso 2 para la primer fila
+		if(*(red+i)){
+			if(s1){
+				*(red+i)=*(red+i-1);				
+			}
+			else{
+				*(red+i)=frag;
+				frag++;
+			}
+		
+		}
+	s1=(*(red+i));
+
 	}
+free(historial);
+return 0;
+}
+/*
+
+	}
+	for(i=dim;i<dim*dim;i++){
+		if(i % dim !=0){
+			if(*(red+i)==1 && *(red+i-1)==0 && *(red+i-dim)==0){
+										If correspondiente al caso 2
+							
+			}
+			if(*(red+i)==1 && ((*(red+i-1)==0 && *(red+i-dim)==1)) || (*(red+i-1)==1 && *(red+i-dim)==0))){   
+				s1=*(red+i-1);			                                If correspondiente al caso 3 
+				
+			}
+
+			if(*(red+i)==1 && *(red+i-1)!=0 && *(red+i-dim)!=0){
+										If correspondiente al caso 4
+							
+			}
+		}	
+	}
+return 0;
 }
 */
 
