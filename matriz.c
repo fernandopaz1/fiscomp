@@ -11,11 +11,9 @@ int rand(void);
 float aleatorio(void);
 int poblar(int *red, float p, int dim);
 int imprimir(int *red, int dim);
-int clasificar(int *red,int dim); /*
-int caso2(int *red,int dim,int frag, int i);
-int caso3(int *red,int dim, int *historial, int s1, int s2, int i);
-int etiqueta_falsa(int *red, int dim, int *historial, int s1 int s2, int i);
-*/
+int clasificar(int *red,int dim); 
+int etiqueta_falsa(int *red, int dim, int *historial, int s1, int s2, int i);
+
 
 
 int main(int argc,char *argv[]){
@@ -56,43 +54,35 @@ return 0;
 
 
 
-/* 
-
-int caso2(int *red,int dim,int frag, int i){
 
 
-
+int etiqueta_falsa(int *red,int dim, int *historial, int s1, int s2, int i){
+	int minimo, maximo;
+	while(*(historial+s1)<0){
+		s1=-(*(historial+s1));
+	}
+	while(*(historial+s2)<0){
+		s2=-(*(historial+s2));
+	}
+	if(s1<s2){
+		minimo=s1;
+		maximo=s2;
+	}
+	else{
+		minimo=s2;
+		maximo=s1;
+	}
+	*(red+i)=minimo;
+	*(historial+maximo)=-minimo;
+	*(historial+minimo)=minimo;
 return 0;
 }
-*/
 
-
-
-/* 
-
-int caso3(int *red,int dim, int *historial, int s1, int s2, int i){
-
-
-
-return 0;
-}
-*/
-
-
-/* 
-
-int caso4(int *red,int dim, int *historial, int s1, int s2, int i){
-
-
-
-return 0;
-}
-*/
 
 
 
 int clasificar(int *red,int dim){
-	int i, s1, *historial,frag;
+	int i, s, s1, s2,*historial,frag;
 	frag=2;
 	historial=(int*)malloc(dim*dim*sizeof(int));
 	for(i=0;i<dim*dim;i++){
@@ -121,39 +111,61 @@ int clasificar(int *red,int dim){
 	s1=(*(red+i));
 
 	}
+
+
+	
+	for(i=dim;i<dim*dim;i++){
+	s1=(*(red+i-1));							//Etiqueta del casillero anterior
+	s2=(*(red+i-dim));							//Etiqueta del casillero de arriba
+		if(*(red+i)){
+			if(i % dim !=0){
+				if(s1==0){
+					if(s2==0){
+						*(red+i)=frag;
+						frag++;	}				//If correspondiente al caso 2
+					else{ *(red+i)=s2; }				//corresponde caso 3 s2 distinto de cero
+								
+				}
+				else{
+					if(s2==0)
+						{*(red+i)=s1;}			   //correspondiente al caso 3 s1 distinto de cero
+					else{
+						etiqueta_falsa(red,dim,historial,s1,s2,i); 	//Caso 4
+					}
+				}
+
+											
+								
+			
+			}
+			else{								//Analisis en la primer columna de la red percolante
+				if(s2==0){
+					*(red+i)=frag;
+					frag++;						//correspondiente al caso2 en el borde 					
+				}
+				else {*(red+i)=s2;}					//Caso 3 en el borde
+			}
+		}
+	}
+	for(i=0;i<dim*dim;i++){
+		s=*(red+i);
+		while(*(historial+s)<0){
+			s=-(*(historial+s));
+		}
+		*(red+i)=s;
+	}
 free(historial);
 return 0;
 }
-/*
 
-	}
-	for(i=dim;i<dim*dim;i++){
-		if(i % dim !=0){
-			if(*(red+i)==1 && *(red+i-1)==0 && *(red+i-dim)==0){
-										If correspondiente al caso 2
-							
-			}
-			if(*(red+i)==1 && ((*(red+i-1)==0 && *(red+i-dim)==1)) || (*(red+i-1)==1 && *(red+i-dim)==0))){   
-				s1=*(red+i-1);			                                If correspondiente al caso 3 
-				
-			}
-
-			if(*(red+i)==1 && *(red+i-1)!=0 && *(red+i-dim)!=0){
-										If correspondiente al caso 4
-							
-			}
-		}	
-	}
-return 0;
-}
-*/
 
 
 int imprimir(int *red, int dim){
 	int i,j;
 	for(i=0;i<dim;i++){
 		for(j=0;j<dim;j++){
-			printf("%d ",*(red+dim*i+j));	
+			if(*(red+dim*i+j)<10){printf("%d   ",*(red+dim*i+j));}
+			else{printf("%d  ",*(red+dim*i+j));}
 		}	
 	printf("\n");
 	}
