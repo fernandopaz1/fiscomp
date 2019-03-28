@@ -13,13 +13,15 @@ int poblar(int *red, float p, int dim);
 int imprimir(int *red, int dim);
 int clasificar(int *red,int dim); 
 int etiqueta_falsa(int *red, int dim, int *historial, int s1, int s2, int i);
+int percola(int *red, int dim, int *etiqueta_percolante);
+ 
+int masa(int *red, int dim,int *etiqueta_percolante, int *mass);
 
-int percola(int *red, int dim);
 
 
 
 int main(int argc,char *argv[]){
-	int dim, *red,seed_flag,seed, percola_flag;
+	int dim, *red,seed_flag,seed, percola_flag,*etiqueta_percolante,*mass;
 	float p;
 	sscanf(argv[1], "%d", & dim);
 	sscanf(argv[2], "%f", & p);
@@ -32,13 +34,19 @@ int main(int argc,char *argv[]){
 		srand(seed);
 	} 
 	red=(int*)malloc(dim*dim*sizeof(int));
+	etiqueta_percolante=(int*)malloc(sizeof(int));
+	mass=(int*)malloc(sizeof(int));
 	poblar(red , p , dim);
 	clasificar(red, dim);
 	imprimir(red, dim);
-	percola_flag=percola(red, dim);
+	percola_flag=percola(red, dim, etiqueta_percolante);
+	masa(red, dim,etiqueta_percolante, mass);
 	if(percola_flag){
 		printf("\n");
-		printf("Percola");
+		printf("Percola con etiqueta:  ");
+		printf("%d",*etiqueta_percolante);
+		printf(" y masa :  ");
+		printf("%d",*mass);
 		printf("\n");
 	}
 	else{printf("\n");
@@ -176,8 +184,8 @@ free(historial);
 return 0;
 }
 
-int percola(int *red, int dim){
-	int perc, j, i, s;
+int percola(int *red, int dim,int *etiqueta_percolante){
+	int perc, j, i,s;
 	s=1;
 	perc=0;
 	for(i=0;i<dim;i++){                                                      //Este for se fija si percola abajo_arriba
@@ -186,6 +194,7 @@ int percola(int *red, int dim){
 			for(j=0;j<dim;j++){
 				if(*(red+dim*(dim-1)+j)==s){
 					perc=1;
+					*etiqueta_percolante=s;
 				}
 			}
 		}
@@ -202,6 +211,20 @@ int percola(int *red, int dim){
 		}
 	}*/
 return perc;
+}
+
+
+
+int masa(int *red, int dim,int *etiqueta_percolante, int *mass){
+	int i,cuentomasa;
+	cuentomasa=0;
+	for(i=0;i<dim*dim;i++){
+		if(*(red+i)==*etiqueta_percolante){
+			cuentomasa++;		
+		}
+	}
+*mass=cuentomasa;
+return 0;	
 }
 
 int imprimir(int *red, int dim){
