@@ -14,20 +14,38 @@ int imprimir(int *red, int dim);
 int clasificar(int *red,int dim); 
 int etiqueta_falsa(int *red, int dim, int *historial, int s1, int s2, int i);
 
+int percola(int *red, int dim);
+
 
 
 int main(int argc,char *argv[]){
-	int dim, *red;
+	int dim, *red,seed_flag,seed, percola_flag;
 	float p;
 	sscanf(argv[1], "%d", & dim);
-	sscanf(argv[2], "%f", & p); 
+	sscanf(argv[2], "%f", & p);
+	sscanf(argv[3], "%d", & seed_flag);
+	sscanf(argv[4], "%d", & seed);
+	if(seed_flag==0){
+		srand(time(NULL));
+	}
+	else{
+		srand(seed);
+	} 
 	red=(int*)malloc(dim*dim*sizeof(int));
-	srand(time(NULL));
 	poblar(red , p , dim);
 	clasificar(red, dim);
 	imprimir(red, dim);
+	percola_flag=percola(red, dim);
+	if(percola_flag){
+		printf("\n");
+		printf("Percola");
+		printf("\n");
+	}
+	else{printf("\n");
+		printf("No Percola");
+		printf("\n");}
 	free(red);	
-	return 0;
+	return percola_flag;
 }
 
 
@@ -158,7 +176,33 @@ free(historial);
 return 0;
 }
 
-
+int percola(int *red, int dim){
+	int perc, j, i, s;
+	s=1;
+	perc=0;
+	for(i=0;i<dim;i++){                                                      //Este for se fija si percola abajo_arriba
+		if(*(red+i)>s){
+			s=*(red+i);
+			for(j=0;j<dim;j++){
+				if(*(red+dim*(dim-1)+j)==s){
+					perc=1;
+				}
+			}
+		}
+	}
+/*	s=1;
+	for(i=0;i<dim;i++){							//Este for se fija si percola derecha_izq
+		if(*(red+dim*i)>s){
+			s=*(red+dim*i);
+			for(j=0;j<dim;j++){
+				if(*(red+dim+dim*j)==s){
+					perc=1;
+				}
+			}
+		}
+	}*/
+return perc;
+}
 
 int imprimir(int *red, int dim){
 	int i,j;
