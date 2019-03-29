@@ -10,18 +10,17 @@
 int rand(void);
 float aleatorio(void);
 int poblar(int *red, float p, int dim);
-int imprimir(int *red, int dim);
+//int imprimir(int *red, int dim);
 int clasificar(int *red,int dim); 
 int etiqueta_falsa(int *red, int dim, int *historial, int s1, int s2, int i);
 int percola(int *red, int dim, int *etiqueta_percolante);
- 
 int masa(int *red, int dim,int *etiqueta_percolante, int *mass);
 
 
 
 
 int main(int argc,char *argv[]){
-	int dim, *red,seed_flag,seed, percola_flag,*etiqueta_percolante,*mass;
+	int dim, *red,seed_flag,seed, percola_flag,*etiqueta_percolante,*mass,*respuesta;
 	float p;
 	sscanf(argv[1], "%d", & dim);
 	sscanf(argv[2], "%f", & p);
@@ -36,9 +35,10 @@ int main(int argc,char *argv[]){
 	red=(int*)malloc(dim*dim*sizeof(int));
 	etiqueta_percolante=(int*)malloc(sizeof(int));
 	mass=(int*)malloc(sizeof(int));
+	respuesta=(int*)malloc(2*sizeof(int));
 	poblar(red , p , dim);
 	clasificar(red, dim);
-	imprimir(red, dim);
+//	imprimir(red, dim);
 	percola_flag=percola(red, dim, etiqueta_percolante);
 	masa(red, dim,etiqueta_percolante, mass);
 	if(percola_flag){
@@ -48,12 +48,17 @@ int main(int argc,char *argv[]){
 		printf(" y masa :  ");
 		printf("%d",*mass);
 		printf("\n");
+		*respuesta=1;
+		*(respuesta+1)=*mass;
 	}
 	else{printf("\n");
 		printf("No Percola");
-		printf("\n");}
+		printf("\n");
+		*respuesta=0;}
+	free(mass);
+	free(etiqueta_percolante);
 	free(red);	
-	return percola_flag;
+	return *respuesta;
 }
 
 
@@ -227,7 +232,7 @@ int masa(int *red, int dim,int *etiqueta_percolante, int *mass){
 return 0;	
 }
 
-int imprimir(int *red, int dim){
+/*int imprimir(int *red, int dim){
 	int i,j;
 	for(i=0;i<dim;i++){
 		for(j=0;j<dim;j++){
@@ -238,4 +243,4 @@ int imprimir(int *red, int dim){
 	}
 return 0;
 }
-
+*/
