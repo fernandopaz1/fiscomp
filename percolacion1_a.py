@@ -7,16 +7,20 @@ from subprocess import call
 
 #Punto a
 
-N_semillas=100
-probas=np.zeros(N_semillas)
-probas_cuad=np.zeros(N_semillas)
+N_semillas=1000
 l=[4,16,32,64,128]
-pc=np.zeros(len(l))
-sigma=np.zeros(len(l))
+probas=np.zeros((len(l),N_semillas))
 presicion=10**(-3)
 cota=-np.log2(presicion)
+
+ind_ant=0
+
+probas_anteriores=np.loadtxt('pc_l_semilla.txt',dtype=float)
+ind_ant=np.load('iteracion_semilla.npy')
+a=ind_ant+N_semillas
+
 for k in range(0,len(l)):
-	for j in range(0, N_semillas):
+	for j in range(ind_ant, ind_ant+N_semillas):
 		p=0.5
 		i=2
 		while(i<cota):
@@ -26,22 +30,12 @@ for k in range(0,len(l)):
 			else:
 				p=p+(0.5)**i
 			i=i+1
-		probas[j]=p
-		probas_cuad[j]=p**2
-	pc[k]=np.mean(probas)
-	sigma[k]=np.sqrt(np.mean(probas_cuad)-(pc[k])**2)
-
-plt.figure(1)
-plt.scatter(sigma,pc)
-plt.show(block=True)
-
-plt.figure(2)
-plt.plot(l,0.5927*np.ones(len(l))-pc)
-plt.xscale('log')
-plt.yscale('log')
-plt.show(block=True)
+		probas[k,j-ind_ant]=p
+	
+		
+probas=np.concatenate((probas, probas_anteriores), axis=1)
 
 
-
-
-
+np.savetxt('largo_red',l)                  
+np.savetxt('pc_l_semilla.txt',probas)
+np.save('iteracion_semilla',a)
