@@ -1,2 +1,2 @@
 # fiscomp
-This is a reposotory of simulations about Percolation, Metropolis-Montecarlo and Molecular dynamics
+This is a repository of simulations about Percolation, Metropolis-Montecarlo and Molecular dynamics

@@ -10,55 +10,55 @@
 int rand(void);
 float aleatorio(void);
 int poblar(int *red, float p, int dim);
-//int imprimir(int *red, int dim);
+int imprimir(int *red, int dim);
 int clasificar(int *red,int dim); 
 int etiqueta_falsa(int *red, int dim, int *historial, int s1, int s2, int i);
 int percola(int *red, int dim, int *etiqueta_percolante);
 int masa(int *red, int dim,int *etiqueta_percolante, int *mass);
+int dist_clusters(int *red, int dim, int *etiqueta_cluster, int *size_cluster);
 
 
 
 
 int main(int argc,char *argv[]){
-	int dim, *red,seed_flag,seed, percola_flag,*etiqueta_percolante,*mass,*respuesta;
+	int dim, *red,percola_flag,*etiqueta_percolante,*mass, *etiqueta_cluster,*size_cluster, nroclusters;
 	float p;
 	sscanf(argv[1], "%d", & dim);
 	sscanf(argv[2], "%f", & p);
-	sscanf(argv[3], "%d", & seed_flag);
-	sscanf(argv[4], "%d", & seed);
-	if(seed_flag==0){
-		srand(time(NULL));
-	}
-	else{
-		srand(seed);
-	} 
+	srand(time(NULL)); 
 	red=(int*)malloc(dim*dim*sizeof(int));
 	etiqueta_percolante=(int*)malloc(sizeof(int));
+	etiqueta_cluster=(int*)malloc((dim*dim)*sizeof(int));
+	size_cluster=(int*)malloc((dim*dim)*sizeof(int));
 	mass=(int*)malloc(sizeof(int));
-	respuesta=(int*)malloc(2*sizeof(int));
 	poblar(red , p , dim);
 	clasificar(red, dim);
-//	imprimir(red, dim);
 	percola_flag=percola(red, dim, etiqueta_percolante);
 	masa(red, dim,etiqueta_percolante, mass);
+	nroclusters= dist_clusters(red, dim, etiqueta_cluster, size_cluster);
+	imprimir(red, dim);
 	if(percola_flag){
 		printf("\n");
 		printf("Percola con etiqueta:  ");
 		printf("%d",*etiqueta_percolante);
 		printf(" y masa :  ");
 		printf("%d",*mass);
-		printf("\n");
-		*respuesta=1;
-		*(respuesta+1)=*mass;
-	}
+		printf(" y clusters :  ");
+		printf("%d",nroclusters);
+		printf("\n");	}
 	else{printf("\n");
 		printf("No Percola");
 		printf("\n");
-		*respuesta=0;}
+		printf("El nro de clusters  es:  ");
+		printf("%d",nroclusters);
+		printf("\n");}
 	free(mass);
 	free(etiqueta_percolante);
+	free(mass);
+	free(etiqueta_cluster);
+	free(size_cluster);
 	free(red);	
-	return *respuesta;
+	return 0;
 }
 
 
@@ -84,8 +84,13 @@ return 0;
 }
 
 
+// FILE *fp;     para pasarlo como argumento a un afuncion hay que  pasarlos  como file *fp
+// fp= fopen("nomblre", "w")   w de escritura
+
+// fprintf(fp, "%f \n", pc);   pc es la variable que quiero guardar
 
 
+// fclose(fp);
 
 int etiqueta_falsa(int *red,int dim, int *historial, int s1, int s2, int i){
 	int minimo, maximo;
@@ -204,17 +209,6 @@ int percola(int *red, int dim,int *etiqueta_percolante){
 			}
 		}
 	}
-/*	s=1;
-	for(i=0;i<dim;i++){							//Este for se fija si percola derecha_izq
-		if(*(red+dim*i)>s){
-			s=*(red+dim*i);
-			for(j=0;j<dim;j++){
-				if(*(red+dim+dim*j)==s){
-					perc=1;
-				}
-			}
-		}
-	}*/
 return perc;
 }
 
@@ -232,7 +226,40 @@ int masa(int *red, int dim,int *etiqueta_percolante, int *mass){
 return 0;	
 }
 
-/*int imprimir(int *red, int dim){
+
+
+
+int dist_clusters(int *red, int dim, int *etiqueta_cluster, int *size_cluster){
+	int i, cuento_clusters, *auxiliar;
+	auxiliar=(int*)malloc(dim*dim*sizeof(int));
+	cuento_clusters=1;
+	for(i=0;i<dim*dim; i++){
+		*(auxiliar+i)=i;
+	}
+	
+	for(i=0;i<dim*dim; i++){
+		if(*(red+i)!=0){
+			if(*(auxiliar+*(red+i))>0){
+				*(auxiliar+*(red+i))=-cuento_clusters;
+				*(red+i)=cuento_clusters;
+				*(etiqueta_cluster+*(red+i))=cuento_clusters;
+				*(size_cluster+*(red+i))=1;
+				cuento_clusters++;
+				
+			}
+			else{
+				*(red+i)=-*(auxiliar+*(red+i));	
+				*(size_cluster+*(red+i))=*(size_cluster+*(red+i))+1;
+			}
+		}
+	}
+ 
+return cuento_clusters-1;
+}
+
+
+
+int imprimir(int *red, int dim){
 	int i,j;
 	for(i=0;i<dim;i++){
 		for(j=0;j<dim;j++){
@@ -243,4 +270,4 @@ return 0;
 	}
 return 0;
 }
-*/
+
