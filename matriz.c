@@ -3,12 +3,11 @@
 #include<math.h>
 #include<time.h>
 
-/*#define red[400]
-#define dim 20
-#define p 0.5*/
+
 
 int rand(void);
 float aleatorio(void);
+float powf(float x, float y);
 int poblar(int *red, float p, int dim);
 int imprimir(int *red, int dim);
 int clasificar(int *red,int dim); 
@@ -16,48 +15,36 @@ int etiqueta_falsa(int *red, int dim, int *historial, int s1, int s2, int i);
 int percola(int *red, int dim, int *etiqueta_percolante);
 int masa(int *red, int dim,int *etiqueta_percolante, int *mass);
 int dist_clusters(int *red, int dim, int *etiqueta_cluster, int *size_cluster);
-
+int problema1a(FILE *fp, float presicion, int iteraciones);
 
 
 
 int main(int argc,char *argv[]){
-	int dim, *red,percola_flag,*etiqueta_percolante,*mass, *etiqueta_cluster,*size_cluster, nroclusters;
+	int dim;
 	float p;
+
+	double total_time;
+	clock_t start, end;
+	start = clock();
+
+	FILE *fp= fopen("pc", "w");
 	sscanf(argv[1], "%d", & dim);
 	sscanf(argv[2], "%f", & p);
 	srand(time(NULL)); 
-	red=(int*)malloc(dim*dim*sizeof(int));
-	etiqueta_percolante=(int*)malloc(sizeof(int));
-	etiqueta_cluster=(int*)malloc((dim*dim)*sizeof(int));
-	size_cluster=(int*)malloc((dim*dim)*sizeof(int));
-	mass=(int*)malloc(sizeof(int));
-	poblar(red , p , dim);
-	clasificar(red, dim);
-	percola_flag=percola(red, dim, etiqueta_percolante);
-	masa(red, dim,etiqueta_percolante, mass);
-	nroclusters= dist_clusters(red, dim, etiqueta_cluster, size_cluster);
-	imprimir(red, dim);
-	if(percola_flag){
-		printf("\n");
-		printf("Percola con etiqueta:  ");
-		printf("%d",*etiqueta_percolante);
-		printf(" y masa :  ");
-		printf("%d",*mass);
-		printf(" y clusters :  ");
-		printf("%d",nroclusters);
-		printf("\n");	}
-	else{printf("\n");
-		printf("No Percola");
-		printf("\n");
-		printf("El nro de clusters  es:  ");
-		printf("%d",nroclusters);
-		printf("\n");}
-	free(mass);
-	free(etiqueta_percolante);
-	free(mass);
-	free(etiqueta_cluster);
-	free(size_cluster);
-	free(red);	
+
+
+	problema1a(fp, pow(10,-5) , 270);            //problema1a  27k iteraciones
+
+
+
+	end = clock();
+	//time count stops 
+	total_time = ((double) (end - start)) / CLOCKS_PER_SEC;
+	//calulate total time
+	printf("\nEl tiempo requerido es:  %f \n", total_time);
+		
+
+	fclose(fp);	
 	return 0;
 }
 
@@ -253,10 +240,69 @@ int dist_clusters(int *red, int dim, int *etiqueta_cluster, int *size_cluster){
 			}
 		}
 	}
- 
+free(auxiliar);
 return cuento_clusters-1;
 }
 
+
+int problema1a(FILE *fp, float presicion, int iteraciones){
+	int i, j, k, percola_flag, *red, dim, *etiqueta_percolante, *mass, *etiqueta_cluster, *size_cluster;
+	float cota, p;
+	cota=-log2(presicion);
+	p=0.5;
+	etiqueta_percolante=(int*)malloc(sizeof(int));
+	mass=(int*)malloc(sizeof(int));
+	for(k=0;k<5;k++){
+		dim=pow(2,k+2);
+		red=(int*)malloc(dim*dim*sizeof(int));
+		size_cluster=(int*)malloc((dim*dim)*sizeof(int));
+		etiqueta_cluster=(int*)malloc((dim*dim)*sizeof(int));
+		for(j=0;j<iteraciones;j++){
+			i=0;
+			while(i<cota){
+				poblar(red, p,  dim);
+				clasificar(red, dim);
+				percola_flag=percola(red, dim, etiqueta_percolante);
+				masa(red, dim, etiqueta_percolante, mass);
+				dist_clusters(red, dim, etiqueta_cluster, size_cluster);
+/*				imprimir(red, dim);
+				printf("Indice i:  ");
+				printf("%d \n",i);
+				printf("Indice j:  ");
+				printf("%d \n",j);
+				printf("Indice k:  ");
+				printf("%d \n",k);
+				if(percola_flag){
+					printf("\n");
+					printf("Percola con etiqueta:  ");
+					printf("%d",*etiqueta_percolante);
+					printf(" y masa :  ");
+					printf("%d",*mass);
+					printf("\n");	}
+				else{printf("\n");
+					printf("No Percola");
+					printf("\n");}                 */
+				if(percola_flag==1){
+					p=p-pow(2.0,-i*1.0);
+				}
+				else{
+					p=p+pow(2.0,-i*1.0);
+				}
+				i++;
+			}
+		
+			fprintf(fp, "%d %f %f %d \n",dim, p, pow(p,2), *mass);  //En la primer fila imprime L y despues p, p**2 y masa
+			 
+		}
+		free(red);
+		free(etiqueta_cluster);
+		free(size_cluster);
+	}
+
+free(mass);
+free(etiqueta_percolante);
+return 0;
+}
 
 
 int imprimir(int *red, int dim){
