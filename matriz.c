@@ -17,6 +17,7 @@ int masa(int *red, int dim,int *etiqueta_percolante, int *mass);
 int dist_clusters(int *red, int dim, int *etiqueta_cluster, int *size_cluster);
 int problema1a(float presicion, int iteraciones);
 int problema1b(int paso , int iteraciones);
+int problema4(int paso , int iteraciones);
 
 
 int main(int argc,char *argv[]){
@@ -33,9 +34,9 @@ int main(int argc,char *argv[]){
 	srand(time(NULL)); 
 
 
-	problema1a(pow(10,-5) , iteraciones);            //problema1a  27k iteraciones
+//	problema1a(pow(10,-5) , iteraciones);            //problema1a  27k iteraciones
 //	problema1b(0.01 , iteraciones);
-
+	problema4(0.001 , 27000);
 
 	end = clock();
 	//time count stops 
@@ -244,7 +245,7 @@ return cuento_clusters-1;
 
 
 int problema1a(float presicion, int iteraciones){
-	int i, j, k, percola_flag, *red, dim, *etiqueta_percolante, *mass, *etiqueta_cluster, *size_cluster; //, cant_clusters;
+	int i, j, k, percola_flag, *red, dim, *etiqueta_percolante, *mass, *etiqueta_cluster, *size_cluster;
 	float cota, p;
 	FILE *fp= fopen("pc", "w");
 	cota=-log2(presicion);
@@ -310,15 +311,12 @@ return 0;
 
 
 int problema1b(int paso , int iteraciones){
-	int i, j, percola_flag, *red, dim, *etiqueta_percolante,*etiqueta_cluster, *size_cluster, cant_clusters;
-	float p;	
+	int i, percola_flag, *red, dim, *etiqueta_percolante;
+	float p;
 	FILE *fpb= fopen("distribucion_perco", "w");
-	FILE *fs= fopen("distribucion_fragmentos", "w");
 	dim=64;
 	red=(int*)malloc(dim*dim*sizeof(int));
 	etiqueta_percolante=(int*)malloc(sizeof(int));
-	size_cluster=(int*)malloc((dim*dim)*sizeof(int));
-	etiqueta_cluster=(int*)malloc((dim*dim)*sizeof(int));
 	p=0.01;
 	
 	while(p<1.0){
@@ -327,21 +325,59 @@ int problema1b(int paso , int iteraciones){
 			clasificar(red, dim);
 			percola_flag=percola(red, dim, etiqueta_percolante);
 			fprintf(fpb, "%f %d \n",p, percola_flag);
-			cant_clusters=dist_clusters(red, dim, etiqueta_cluster, size_cluster);
-			for(j=1;j<=cant_clusters;j++){
-				fprintf(fs, "%d ", *(size_cluster+j));
-			}
-			fprintf(fs, "\n");
 		}
 		p=p+0.01;
 	}
-fclose(fpb);
-fclose(fs);	
+fclose(fpb);	
+free(red);
+free(etiqueta_percolante);
+return 0;
+}
+
+int problema4(int paso , int iteraciones){
+	int i,j, *red, dim, *etiqueta_percolante,*etiqueta_cluster, *size_cluster, cant_clusters, *s_acumulacion;
+	float p;	
+	FILE *fs= fopen("distribucion_fragmentos", "w");
+	
+	dim=64;	
+	cant_clusters=0;
+
+	red=(int*)malloc(dim*dim*sizeof(int));
+	etiqueta_percolante=(int*)malloc(sizeof(int));
+	size_cluster=(int*)malloc((dim*dim)*sizeof(int));
+	etiqueta_cluster=(int*)malloc((dim*dim)*sizeof(int));
+	s_acumulacion=(int*)malloc((dim*dim)*sizeof(int));
+
+
+	
+	p=0.58;
+	
+	while(p<0.6){
+		for(i=0;i<iteraciones;i++){
+			poblar(red, p,  dim);
+			clasificar(red, dim);
+			percola(red, dim, etiqueta_percolante);
+			cant_clusters=dist_clusters(red, dim, etiqueta_cluster, size_cluster);
+			if(cant_clusters!=0){	
+				for(j=1;j<=cant_clusters;j++){
+					*(s_acumulacion+j)=*(s_acumulacion+j)+*(size_cluster+j);
+				}
+			}
+		}
+		for(j=1;j<=cant_clusters;j++){
+			fprintf(fs, "%d ",*(s_acumulacion+j));
+		}
+		fprintf(fs, "\n");
+		
+		p=p+paso;
+	}
 free(red);
 free(etiqueta_cluster);
 free(size_cluster);
 free(etiqueta_percolante);
-return 0;
+free(s_acumulacion);
+fclose(fs);
+return 0;	
 }
 
 int imprimir(int *red, int dim){
