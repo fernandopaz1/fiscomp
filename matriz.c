@@ -15,8 +15,8 @@ int etiqueta_falsa(int *red, int dim, int *historial, int s1, int s2, int i);
 int percola(int *red, int dim, int *etiqueta_percolante);
 int masa(int *red, int dim,int *etiqueta_percolante, int *mass);
 int dist_clusters(int *red, int dim, int *etiqueta_cluster, int *size_cluster);
-int problema1a(FILE *fp, float presicion, int iteraciones);
-int problema1b(FILE *fpb, FILE *fs, int paso , int iteraciones);
+int problema1a(float presicion, int iteraciones);
+int problema1b(int paso , int iteraciones);
 
 
 int main(int argc,char *argv[]){
@@ -27,28 +27,24 @@ int main(int argc,char *argv[]){
 	clock_t start, end;
 	start = clock();
 
-	FILE *fp= fopen("pc", "w");
-	FILE *fpb= fopen("distribucion_perco", "w");
-	FILE *fs= fopen("distribucion_fragmentos", "w");
+	
 	sscanf(argv[1], "%d", & iteraciones);
 //	sscanf(argv[2], "%f", & p);
 	srand(time(NULL)); 
 
 
-	problema1a(fp, pow(10,-5) , iteraciones);            //problema1a  27k iteraciones
-	problema1b(fpb, fs, 0.01 , iteraciones);
+	problema1a(pow(10,-5) , iteraciones);            //problema1a  27k iteraciones
+//	problema1b(0.01 , iteraciones);
 
 
 	end = clock();
 	//time count stops 
-	total_time = ((double) (end - start)) / CLOCKS_PER_SEC;
+	total_time = ((double) ((end - start)) / CLOCKS_PER_SEC)/60;
 	//calulate total time
-	printf("\nEl tiempo requerido es:  %f \n", total_time);
+	printf("\nEl tiempo (minutos) requerido es:  %f \n", total_time);
 		
 
-	fclose(fp);
-	fclose(fpb);
-	fclose(fs);	
+	
 	return 0;
 }
 
@@ -75,13 +71,6 @@ return 0;
 }
 
 
-// FILE *fp;     para pasarlo como argumento a un afuncion hay que  pasarlos  como file *fp
-// fp= fopen("nomblre", "w")   w de escritura
-
-// fprintf(fp, "%f \n", pc);   pc es la variable que quiero guardar
-
-
-// fclose(fp);
 
 int etiqueta_falsa(int *red,int dim, int *historial, int s1, int s2, int i){
 	int minimo, maximo;
@@ -254,9 +243,10 @@ return cuento_clusters-1;
 }
 
 
-int problema1a(FILE *fp, float presicion, int iteraciones){
+int problema1a(float presicion, int iteraciones){
 	int i, j, k, percola_flag, *red, dim, *etiqueta_percolante, *mass, *etiqueta_cluster, *size_cluster; //, cant_clusters;
 	float cota, p;
+	FILE *fp= fopen("pc", "w");
 	cota=-log2(presicion);
 	p=0.5;
 	etiqueta_percolante=(int*)malloc(sizeof(int));
@@ -273,11 +263,11 @@ int problema1a(FILE *fp, float presicion, int iteraciones){
 				clasificar(red, dim);
 				percola_flag=percola(red, dim, etiqueta_percolante);
 				masa(red, dim, etiqueta_percolante, mass);
-		/*		imprimir(red, dim);
-			//	cant_clusters=dist_clusters(red, dim, etiqueta_cluster, size_cluster);
-			//	for(l=0;l<cant-clusters;l++){
-			//		fprintf(fs, "%d %d", *(etiqueta_cluster+l), *(size_cluster+l));
-			//	}
+		/*	//	imprimir(red, dim);
+				cant_clusters=dist_clusters(red, dim, etiqueta_cluster, size_cluster);
+				for(l=0;l<cant-clusters;l++){
+					fprintf(fs, "%d %d", *(etiqueta_cluster+l), *(size_cluster+l));
+				}
 				printf("Indice i:  ");
 				printf("%d \n",i);
 				printf("Indice j:  ");
@@ -313,14 +303,17 @@ int problema1a(FILE *fp, float presicion, int iteraciones){
 
 free(mass);
 free(etiqueta_percolante);
+fclose(fp);
 return 0;
 }
 
 
 
-int problema1b(FILE *fpb, FILE *fs, int paso , int iteraciones){
-	int i,j, percola_flag, *red, dim, *etiqueta_percolante,*etiqueta_cluster, *size_cluster,cant_clusters;
-	float p;
+int problema1b(int paso , int iteraciones){
+	int i, j, percola_flag, *red, dim, *etiqueta_percolante,*etiqueta_cluster, *size_cluster, cant_clusters;
+	float p;	
+	FILE *fpb= fopen("distribucion_perco", "w");
+	FILE *fs= fopen("distribucion_fragmentos", "w");
 	dim=64;
 	red=(int*)malloc(dim*dim*sizeof(int));
 	etiqueta_percolante=(int*)malloc(sizeof(int));
@@ -336,13 +329,14 @@ int problema1b(FILE *fpb, FILE *fs, int paso , int iteraciones){
 			fprintf(fpb, "%f %d \n",p, percola_flag);
 			cant_clusters=dist_clusters(red, dim, etiqueta_cluster, size_cluster);
 			for(j=1;j<=cant_clusters;j++){
-				fprintf(fs, "%d %d ", *(etiqueta_cluster+j), *(size_cluster+j));
+				fprintf(fs, "%d ", *(size_cluster+j));
 			}
 			fprintf(fs, "\n");
 		}
 		p=p+0.01;
 	}
-	
+fclose(fpb);
+fclose(fs);	
 free(red);
 free(etiqueta_cluster);
 free(size_cluster);
