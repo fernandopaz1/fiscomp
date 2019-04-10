@@ -22,7 +22,7 @@ int problema4(int paso , int iteraciones);
 
 int main(int argc,char *argv[]){
 	int iteraciones;
-	//float p;
+
 
 	double total_time;
 	clock_t start, end;
@@ -30,13 +30,12 @@ int main(int argc,char *argv[]){
 
 	
 	sscanf(argv[1], "%d", & iteraciones);
-//	sscanf(argv[2], "%f", & p);
 	srand(time(NULL)); 
 
 
 //	problema1a(pow(10,-5) , iteraciones);            //problema1a  27k iteraciones
 //	problema1b(0.01 , iteraciones);
-	problema4(0.001 , 27000);
+	problema4(0.02 , 27000);
 
 	end = clock();
 	//time count stops 
@@ -259,6 +258,7 @@ int problema1a(float presicion, int iteraciones){
 		etiqueta_cluster=(int*)malloc((dim*dim)*sizeof(int));
 		for(j=0;j<iteraciones;j++){
 			i=0;
+			srand(time(NULL));
 			while(i<cota){
 				poblar(red, p,  dim);
 				clasificar(red, dim);
@@ -326,7 +326,7 @@ int problema1b(int paso , int iteraciones){
 			percola_flag=percola(red, dim, etiqueta_percolante);
 			fprintf(fpb, "%f %d \n",p, percola_flag);
 		}
-		p=p+0.01;
+		p=p+paso;
 	}
 fclose(fpb);	
 free(red);

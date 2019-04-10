@@ -12,8 +12,11 @@ datos=np.loadtxt('pc',dtype=float)
 
 iteraciones=27000
 
+dim=np.zeros(len(datos[:,0])/27000)
 
-dim=[4,8,16,32,64]
+for i in range(0,len(dim)):
+	dim[i]=datos[i*iteraciones,0]
+
 p_l=np.zeros(len(dim))
 p_cuad_l=np.zeros(len(dim))
 masa=np.zeros(len(dim))
@@ -43,6 +46,4 @@ plt.show(block=True)
 
 plt.figure(2)
 plt.scatter(sigma,p_l)
-plt.xscale('log')
-plt.yscale('log')
 plt.show(block=True)
