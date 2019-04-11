@@ -35,7 +35,7 @@ int main(int argc,char *argv[]){
 
 	problema1a(pow(10,-5) , iteraciones);            //problema1a  27k iteraciones
 //	problema1b(0.01 , iteraciones);
-//	problema4(0.001 , iteraciones);
+//	problema4(0.0001 , iteraciones);
 
 	end = clock();
 	//time count stops 
@@ -244,15 +244,21 @@ return cuento_clusters-1;
 
 
 int problema1a(float presicion, int iteraciones){
-	int i, j, k, percola_flag, *red, dim, *etiqueta_percolante, *mass, *etiqueta_cluster, *size_cluster;
+	int i, j, k, percola_flag, *red, dim, *etiqueta_percolante, *mass, *etiqueta_cluster, *size_cluster,*dimension;
 	float cota, p;
 	FILE *fp= fopen("pc", "w");
 	cota=-log2(presicion);
 	p=0.5;
 	etiqueta_percolante=(int*)malloc(sizeof(int));
+	dimension=(int*)malloc(10*sizeof(int));
 	mass=(int*)malloc(sizeof(int));
-	for(k=0;k<5;k++){                                            //k va de 0 a 4   L va de 4 a 64 
-		dim=pow(2,k+2);
+
+	for(k=0;k<8;k++){
+		*(dimension+k)=128+k*(512-128)/10;                      // division entera
+	}
+	
+	for(k=0;k<8;k++){                                            //k va de 0 a 4   L va de 4 a 64 
+		dim=*(dimension+k);
 		red=(int*)malloc(dim*dim*sizeof(int));
 		size_cluster=(int*)malloc((dim*dim)*sizeof(int));
 		etiqueta_cluster=(int*)malloc((dim*dim)*sizeof(int));
@@ -304,6 +310,7 @@ int problema1a(float presicion, int iteraciones){
 
 free(mass);
 free(etiqueta_percolante);
+free(dimension);
 fclose(fp);
 return 0;
 }
