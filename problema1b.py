@@ -7,32 +7,20 @@ from subprocess import call
 
 
 
-datos=np.loadtxt('distribucion_perco',dtype=float)
+datos=np.loadtxt('datos_1b',dtype=float)
 
 
 
-iteraciones=27000
-a=len(datos[:,1])/iteraciones
+#iteraciones=27000
+#a=len(datos[:,1])/iteraciones
 
 dim=64
 
 
-p=np.linspace(0.01,0.99,a)
-paso=p[1]-p[0]
-cuento_precolaciones=np.zeros(len(p))
 
+p=datos[:,0]
+cuento_precolaciones=datos[:,1]
 
-for i in range(0,len(p)):
-	for k in range(0,iteraciones):
-		cuento_precolaciones[i]=cuento_precolaciones[i]+datos[k+i*iteraciones,1]
-	
-	
-cuento_precolaciones=cuento_precolaciones/iteraciones
-
-
-#print(cuento_precolaciones[59])
-
-#exit()
 indice=0
 for i in range(0,len(p)) :
 	if(cuento_precolaciones[i]>0.5):		#Este indice es el del primer elemento mayor a 0.5
