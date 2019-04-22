@@ -7,14 +7,14 @@ from subprocess import call
 
 #Punto a
 
-datos=np.loadtxt('pc',dtype=float)
+datos=np.loadtxt('pc')
 
 iteraciones=27000
 
 
 
 
-dim=np.zeros(len(datos[:,0])/iteraciones)
+dim=np.zeros(int(len(datos[:,0])/iteraciones))
 
 
 for i in range(0,len(dim)):
@@ -44,34 +44,44 @@ for i in range(0,len(dim)):
 #			ajuste ---->  pc(inf)
 #
 ##########################################################################
+nro_ptos=10
 
-sigma_fit=np.zeros(10)
-p_l_fit=np.zeros(10)
 
-for i in range(0,10):
-	sigma_fit[i]=sigma[i+10]
-	p_l_fit[i]=p_l[i+10]
+sigma_fit=np.zeros(nro_ptos)
+p_l_fit=np.zeros(nro_ptos)
+
+for i in range(0,nro_ptos):
+	sigma_fit[i]=sigma[i+len(sigma)-nro_ptos]
+	p_l_fit[i]=p_l[i+len(sigma)-nro_ptos]
 	
-fit_coef=np.polyfit(sigma_fit, p_l_fit, 1, rcond=None, full=False, w=None, cov=False)
+fit_coef=np.polyfit(sigma_fit, p_l_fit, 1, rcond=None, full=True, w=None, cov=False)
 
 def fit_lineal(x):
-	f=x*fit_coef[0]+fit_coef[1]
+	f=x*fit_coef[0][0]+fit_coef[0][1]
 	return f
 
 
 f=np.zeros(len(dim))
-pc_inf=fit_coef[1]
+pc_inf=fit_coef[0][1]
 
 
 for i in range(0,len(dim)):
 	f[i]=fit_lineal(sigma[i])	
 	
-print("El valor de pc es: ", fit_coef[1])
+print("El valor de pc es: ", fit_coef[0][1])
 
 plt.figure(2)
-plt.scatter(sigma,p_l)
-plt.plot(sigma,f)
+line1 = plt.scatter(sigma,p_l,label='$p_{c}(L)$',marker='^')
+line2, = plt.plot(sigma,f,label='Ajuste lineal',linestyle='--')
+plt.xlabel('$\sigma$')
+plt.ylabel('$p_{c}(L)$')
+axes = plt.gca()
+#axes.set_xlim([xmin,xmax])
+axes.set_ylim([0.55,0.65])
+legend1 = plt.legend(handles=[line1,line2], loc=1)
 plt.show(block=True)
+
+
 
 
 ###########################################################
@@ -99,7 +109,7 @@ def fit_lineal(x):
 f2=np.zeros(len(dim))
 nu=fit_coef2[0]
 
-print("El exponente \{nu} es:  ", -1/nu)
+print("El exponente $\{nu}$ es:  ", -1/nu)
 
 for i in range(0,len(dim)):
 	f2[i]=fit_lineal(np.log(dim[i]))	
