@@ -5,7 +5,7 @@ import scipy.special as sp
 from scipy.optimize import leastsq
 
 
-datos=np.loadtxt('distribucion_fragmentos', delimiter=" ")
+datos=np.loadtxt('distribucion_fragmentos64', delimiter=" ")
 
 
 probas=len(datos[:,0])
@@ -20,7 +20,7 @@ rango_min=200
 rango=500
 
 
-
+size=2
 
 
 x=np.log(range(rango_min,rango))
@@ -35,15 +35,20 @@ plt.figure(1)
 x=np.log(range(rango_min,rango))
 y=np.log(datos[100,rango_min:rango])
 p=np.polyfit(x,y,1)
-line1 = plt.scatter(x,y,s=1)
+line1 = plt.scatter(x,y,s=size)
 line2 = plt.plot(x,np.polyval(p,x))
 plt.show()
 
 plt.figure(2)
-plt.scatter(datos[:,0],chi_squared)
+plt.scatter(datos[:,0],chi_squared,s=size)
 plt.show()
+
 
 
 plt.figure(3)
-plt.scatter(datos[:,0],taus)
+plt.scatter(datos[:,0],taus,s=size)
 plt.show()
+
+np.min(chi_squared)
+indice_optimo=np.where(chi_squared == min(chi_squared))[0][0]
+pc_64=datos[indice_optimo,0]
