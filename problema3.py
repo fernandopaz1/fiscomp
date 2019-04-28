@@ -1,3 +1,11 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Apr 23 23:26:50 2019
+
+@author: paz
+"""
+
 import numpy as np
 import math as mt
 import matplotlib.pyplot as plt
@@ -6,65 +14,35 @@ from subprocess import call
 
 
 
+#datos=np.loadtxt('masa',dtype=float)
 
-datos=np.loadtxt('dim_fractal',dtype=float)
+datos=np.loadtxt('masa',dtype=float)
 
-
-
-
-
+long=int(len(datos[:,0])/10)
 
 
+#dat64=datos[0:long,:]
+#dat70=datos[long:2*long,:]
+#dat76=datos[2*long:3*long,:]
+#dat83=datos[3*long:4*long,:]
+#dat89=datos[4*long:5*long,:]
+#dat96=datos[5*long:6*long,:]
+#dat102=datos[6*long:7*long,:]
+#dat108=datos[7*long:8*long,:]
+#dat115=datos[8*long:9*long,:]
+#dat121=datos[9*long:10*long,:]
 
-l=datos[:,0]
-m=datos[:,5]
 
-P=np.zeros(len(m))
+L=[64,70,76,83,89,96,102,108,115,121]
 
-for i in range(1,len(l)):
-	P[i]=m[i]/(l[i]*l[i])		
 
-p=np.polyfit(np.log(l[2:30]),np.log(m[2:30]),1)
 
 plt.figure(1)
-plt.scatter(np.log(l[2:101]),np.log(m[2:101]),s=2)
-plt.plot(np.log(l[2:101]),np.polyval(p,np.log(l[2:101])))
+for i in range(0,9):
+    lab ='L = {}'.format(L[i])
+    plt.scatter(datos[i*long:(i+1)*long,1],(datos[i*long:(i+1)*long,2])/(L[i]*L[i]),s=2,label=lab)
+plt.xlabel('p')
+plt.ylabel('$P_{\infty}(L)$')
+legend1 = plt.legend(loc='Best')
 plt.show(block=True)
-
-D=91/48
-
-
-rango=30
-
-lab=''
-
-for i in range(2,6):
-    D=np.polyfit(np.log(l[2:rango]),np.log(datos[2:rango,i]),1)[0]
-    lab =lab + 'D = {}'.format(D)
-
-size=2
-
-plt.figure(1)
-line1 = plt.scatter(np.log(l[2:101]),np.log(datos[2:101,2]),s=size,label=lab[0:22])
-line1a= plt.plot(np.log(l[2:101]),np.polyval(np.polyfit(np.log(l[2:rango]),np.log(datos[2:rango,2]),1),np.log(l[2:101])))
-
-line2 = plt.scatter(np.log(l[2:101]),np.log(datos[2:101,3]),s=size,label=lab[22:44])
-line2a= plt.plot(np.log(l[2:101]),np.polyval(np.polyfit(np.log(l[2:rango]),np.log(datos[2:rango,3]),1),np.log(l[2:101])))
-
-line3 = plt.scatter(np.log(l[2:101]),np.log(datos[2:101,4]),s=size,label=lab[44:66])
-line3a= plt.plot(np.log(l[2:101]),np.polyval(np.polyfit(np.log(l[2:rango]),np.log(datos[2:rango,4]),1),np.log(l[2:101])))
-
-line4 = plt.scatter(np.log(l[2:101]),np.log(datos[2:101,5]),s=size,label=lab[66:88])
-line4a= plt.plot(np.log(l[2:101]),np.polyval(np.polyfit(np.log(l[2:rango]),np.log(datos[2:rango,5]),1),np.log(l[2:101])))
-
-plt.xlabel('Log(L)')
-plt.ylabel('Log(M)')
-#axes = plt.gca()
-#axes.set_xlim([0.55,0.63])
-#axes.set_ylim([0.55,0.65])
-legend1 = plt.legend(handles=[line1,line2,line3,line4], loc='Best')
-plt.show(block=True)
-
-
-
 

@@ -70,15 +70,17 @@ for i in range(0,len(dim)):
 	
 print("El valor de pc es: ", fit_coef[0][1])
 
+lab ='Ajuste Lineal; $p_c(\infty)$ = {}'.format('%.5f' % fit_coef[0][1])
+
 plt.figure(2)
 line1 = plt.scatter(sigma,p_l,label='$p_{c}(L)$',marker='^')
-line2, = plt.plot(sigma,f,label='Ajuste lineal',linestyle='--')
+line2, = plt.plot(sigma,f,label=lab,linestyle='--')
 plt.xlabel('$\sigma$')
 plt.ylabel('$p_{c}(L)$')
 axes = plt.gca()
 #axes.set_xlim([xmin,xmax])
-axes.set_ylim([0.55,0.65])
-legend1 = plt.legend(handles=[line1,line2], loc=1)
+#axes.set_ylim([0.55,0.65])
+legend1 = plt.legend(handles=[line1,line2], loc=3)
 plt.show(block=True)
 
 
