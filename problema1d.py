@@ -5,7 +5,7 @@ import scipy.special as sp
 from scipy.optimize import leastsq
 
 
-datos=np.loadtxt('distribucion_fragmentos64', delimiter=" ")
+datos=np.loadtxt('distribucion_fragmentos', delimiter=" ")
 
 
 probas=len(datos[:,0])
@@ -177,52 +177,114 @@ pc64=0.59256
 pc64=datos[indice_prob,0]
 b=0.334
 plt.figure(6)
-line2 = plt.scatter((datos[:,0]-pc64*a)*(41**b),np.log(datos[:,41]/datos[indice_prob,41]),s=size,label='s=41')
-line3 = plt.scatter((datos[:,0]-pc64*a)*(42**b),np.log(datos[:,42]/datos[indice_prob,42]),s=size,label='s=42')
-line4 = plt.scatter((datos[:,0]-pc64*a)*(43**b),np.log(datos[:,43]/datos[indice_prob,43]),s=size,label='s=43')
-line5 = plt.scatter((datos[:,0]-pc64*a)*(44**b),np.log(datos[:,44]/datos[indice_prob,44]),s=size,label='s=44')
-line6 = plt.scatter((datos[:,0]-pc64*a)*(45**b),np.log(datos[:,45]/datos[indice_prob,45]),s=size,label='s=45')
-line7 = plt.scatter((datos[:,0]-pc64*a)*(46**b),np.log(datos[:,46]/datos[indice_prob,46]),s=size,label='s=46')
-line8 = plt.scatter((datos[:,0]-pc64*a)*(47**b),np.log(datos[:,47]/datos[indice_prob,47]),s=size,label='s=47')
-line9 = plt.scatter((datos[:,0]-pc64*a)*(48**b),np.log(datos[:,48]/datos[indice_prob,48]),s=size,label='s=48')
-line10 = plt.scatter((datos[:,0]-pc64*a)*(49**b),np.log(datos[:,49]/datos[indice_prob,49]),s=size,label='s=49')
-line11 = plt.scatter((datos[:,0]-pc64*a)*(200**b),np.log(datos[:,200]/datos[indice_prob,200]),s=size,label='s=49')
+line2 = plt.scatter((datos[:,0]-pc64*a)*(41**b),(datos[:,41]/datos[indice_prob,41]),s=size,label='s=41')
+line3 = plt.scatter((datos[:,0]-pc64*a)*(42**b),(datos[:,42]/datos[indice_prob,42]),s=size,label='s=42')
+line4 = plt.scatter((datos[:,0]-pc64*a)*(43**b),(datos[:,43]/datos[indice_prob,43]),s=size,label='s=43')
+line5 = plt.scatter((datos[:,0]-pc64*a)*(44**b),(datos[:,44]/datos[indice_prob,44]),s=size,label='s=44')
+line6 = plt.scatter((datos[:,0]-pc64*a)*(45**b),(datos[:,45]/datos[indice_prob,45]),s=size,label='s=45')
+line7 = plt.scatter((datos[:,0]-pc64*a)*(46**b),(datos[:,46]/datos[indice_prob,46]),s=size,label='s=46')
+line8 = plt.scatter((datos[:,0]-pc64*a)*(47**b),(datos[:,47]/datos[indice_prob,47]),s=size,label='s=47')
+line9 = plt.scatter((datos[:,0]-pc64*a)*(48**b),(datos[:,48]/datos[indice_prob,48]),s=size,label='s=48')
+line10 = plt.scatter((datos[:,0]-pc64*a)*(49**b),(datos[:,49]/datos[indice_prob,49]),s=size,label='s=49')
+line11 = plt.scatter((datos[:,0]-pc64*a)*(50**b),np.log(datos[:,50]/datos[indice_prob,50]),s=size,label='s=50')
 plt.xlabel('z')
-plt.ylabel('$Log(\\frac{<ns(p)>}{<ns(p_c)>})$')
+plt.ylabel('$\\frac{<ns(p)>}{<ns(p_c)>}$')
 ##axes = plt.gca()
 ##axes.set_xlim([-0.8,0])
-#plt.yscale('log')
+plt.gca().set_ylim(0.0001, 10)
+#plt.gca().set_xlim(0.0001, 10)
+plt.yscale('log')
 legend1 = plt.legend(handles=[line2,line3,line4,line5,line6,line7,line8,line9,line10], loc='Best')
 plt.show()
 
 
 
-pc6=0.33813
-pc=pc6
-m2=np.zeros(len(datos[:,0]))
+pc128=0.5926
+pc64=0.59256
+pc=pc64
 m1=np.zeros(len(datos[:,0]))
 m0=np.zeros(len(datos[:,0]))
 s=np.zeros(len(datos[0,:]))
 for j in range(0,len(datos[0,:])):
-    s[j]=j
+    if(j<70):
+        s[j]=j
 s_cuad=s**2
 
+m2=np.zeros(len(datos[:,0]))
 for i in range(0,len(datos[:,0])):
-    m2[i]=np.sum(datos[i,:]*s_cuad)/max(datos[i,:])
-    m1[i]=np.sum(datos[i,:]*s)/max(datos[i,:])
+    m2[i]=np.sum(datos[i,:]*s_cuad)#max(datos[i,:])
+    m1[i]=np.sum(datos[i,:]*s)#/max(datos[i,:])
     m0[i]=np.sum(datos[i,:])/max(datos[i,:])
     
-  
-  
+
+#m2=m1/m0
+#m2=m0    
 plt.figure(8)    
-plt.scatter((datos[:,0]-pc)/pc,np.log(m2))    
+plt.scatter((datos[0:len(m2),0]-pc)/pc,np.log(m2),s=2)    
+#axes = plt.gca()
+#axes.set_xlim([-0.4,0.4])
+plt.show()
+    
+  
+plt.figure(11)    
+plt.scatter((datos[:,0]-pc)/pc,m2,s=2)    
+#axes = plt.gca()
+#axes.set_xlim([-0.4,0.4])
 plt.show()
 
-plt.figure(9)    
-plt.scatter(np.abs(datos[:,0]-pc),np.log(m1))    
+p1=np.zeros(80)
+p2=np.zeros(80)
+chi=np.zeros(80)
+ventana1=50
+paso1=2
+ventana2=50
+paso2=2
+m2_max=max(m2)
+indice_max=np.where(m2 == m2_max)[0][0]
+indice_max=437  
+
+indice_comienzo1=indice_max-25
+indice_comienzo2=indice_max+25 
+
+x=(datos[:,0]-pc)/pc
+for i in range(0,80):
+    inicio1=int(indice_comienzo1+paso1*i)
+    fin1=int(inicio1+ventana1)
+    inicio2=int(indice_comienzo2-paso2*i)
+    fin2=int(inicio2-ventana2)
+    p1[i]=np.polyfit(x[inicio1:fin1],np.log(m2[inicio1:fin1]),1)[0]
+    p2[i]=np.polyfit(x[fin2:inicio2],np.log(m2[fin2:inicio2]),1)[0]
+    chi[i]=(p2[i]+p1[i])**2
+
+for i in range(0,len(chi)):
+    if(chi[i]==0):
+        chi[i]=100
+chimin=min(chi)
+ind_min=np.where(chi== chimin)[0][0]
+p2[ind_min]
+    
+plt.figure(12)    
+line1 = plt.scatter(range(0,80),-p1,label='$\\gamma+= {}$'.format('%.2f' %p1[ind_min]))    
+line2 = plt.scatter(range(0,80),p2,label='$\\gamma-= {}$'.format('%.2f' %p2[ind_min]))  
+legend1 = plt.legend(handles=[line1,line2], loc='Best')  
+plt.xlabel('paso')
+plt.ylabel('Pendientes')
+legend1 = plt.legend(handles=[line1,line2], loc='Best')
+plt.show()
+    
+plt.figure(13)    
+line1 = plt.scatter(range(0,80),chi,label='Distancia entre puntos',s=10)    
+legend1 = plt.legend(handles=[line1], loc='Best')  
+plt.xlabel('paso')
+plt.ylabel('$\\chi^2_\\gamma$')
 plt.show()
 
-plt.figure(10)    
-plt.scatter((datos[:,0]-pc),np.log(m0))    
-plt.show()
 
+D=91/48
+nu=4/3
+d=2
+t=1+d/D
+sigma=(nu*D)**(-1)
+alfa=2-(tau-1)/(sigma)
+beta=nu*(d-D)
+gamma=(3-t)/sigma
