@@ -67,14 +67,15 @@ lab=''
 for i in range(2,6):
     pc,a,b,j=pc_med(datos[:,i])
     tam=int(L[i-1])
-    lab =lab + 'L= {}; pc = {}'.format(tam,pc)
+    lab =lab + 'L= {}; pc = {}'.format(tam, '%.4f' %pc)
+    print(len(lab))
 
 plt.figure(1)
-line1 = plt.scatter(p,datos[:,2],s=size,label=lab[0:30])
-plt.plot(x,y)
-line2 = plt.scatter(datos[:,0],datos[:,3],s=size,label=lab[30:60])
-line3 = plt.scatter(datos[:,0],datos[:,4],s=size,label=lab[60:91])
-line4 = plt.scatter(datos[:,0],datos[:,5],s=size,label=lab[91:122])
+line1 = plt.scatter(p,datos[:,2],s=size,label=lab[0:18])
+#plt.plot(x,y)
+line2 = plt.scatter(datos[:,0],datos[:,3],s=size,label=lab[18:36])
+line3 = plt.scatter(datos[:,0],datos[:,4],s=size,label=lab[36:55])
+line4 = plt.scatter(datos[:,0],datos[:,5],s=size,label=lab[55:74])
 plt.plot(linea1,0.5*np.ones(len(linea1)))
 plt.plot(pc*np.ones(len(linea2)),linea2)
 plt.xlabel('p')
@@ -84,5 +85,3 @@ axes.set_xlim([0.55,0.63])
 #axes.set_ylim([0.55,0.65])
 legend1 = plt.legend(handles=[line1,line2,line3,line4], loc='Best')
 plt.show(block=True)
-
-

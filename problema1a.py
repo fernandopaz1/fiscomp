@@ -92,6 +92,30 @@ plt.show(block=True)
 #
 ###########################################################
 
+datos=np.loadtxt('pc_nu')
+
+
+iteraciones=27000
+
+
+
+
+dim=np.zeros(int(len(datos[:,0])/iteraciones))
+
+
+for i in range(0,len(dim)):
+	dim[i]=datos[i*iteraciones,0]
+
+
+p_l=np.zeros(len(dim))
+for i in range(0,len(dim)):
+	for k in range(0,iteraciones):
+		p_l[i]=p_l[i]+datos[k+i*iteraciones,1]
+p_l=p_l/iteraciones
+
+
+
+
 puntos=5
 
 dim_fit=np.zeros(puntos)

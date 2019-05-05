@@ -13,6 +13,7 @@ from scipy.optimize import leastsq
 
 
 datos=np.loadtxt('distribucion_fragmentos', delimiter=" ")
+#datos=np.loadtxt('distribucion_fragmentos_sin_percolante', delimiter=" ")
 
 pc64=0.59256
 pc=pc64
@@ -28,18 +29,20 @@ m2=np.zeros(len(datos[:,0]))
 for i in range(0,len(datos[:,0])):
     m2[i]=np.sum(datos[i,:]*s_cuad)#max(datos[i,:])
     m1[i]=np.sum(datos[i,:]*s)#/max(datos[i,:])
-    m0[i]=np.sum(datos[i,:])
+    m0[i]=np.sum(datos[i,:])    
 
 m2=m2/m0  
 plt.figure(8)    
 plt.scatter((datos[0:len(m2),0]-pc)/pc,np.log(m2),s=2)    
 #axes = plt.gca()
 #axes.set_xlim([-0.4,0.4])
+plt.xlabel('m2')
+plt.ylabel('$\\frac{p-p_c(L)}{p_c(L)}$')
 plt.show()
     
   
 plt.figure(11)    
-plt.scatter((datos[:,0]-pc)/pc,m2,s=2)    
+plt.scatter((datos[:,0]),m2,s=2)    
 #axes = plt.gca()
 #axes.set_xlim([-0.4,0.4])
 plt.show()
@@ -53,7 +56,7 @@ ventana2=50
 paso2=2
 m2_max=max(m2)
 indice_max=np.where(m2 == m2_max)[0][0]
-indice_max=437  
+#indice_max=437  
 
 indice_comienzo1=indice_max-25
 indice_comienzo2=indice_max+25 
